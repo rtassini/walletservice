@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: walletservice
+
+  datasource:
+    url: jdbc:h2:mem:walletservice
+    username: sa
+    password: sa
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
