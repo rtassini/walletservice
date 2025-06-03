@@ -2,10 +2,7 @@ package com.recargapay.walletservice.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,6 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -30,7 +28,6 @@ public class BalanceHistory {
     @JoinColumn(name = "wallet_id", nullable = false)
     private Wallet wallet;
 
-    @NotBlank
     private BigDecimal balance;
 
     @CreationTimestamp
