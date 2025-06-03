@@ -4,7 +4,6 @@ import com.recargapay.walletservice.dto.UserDTO;
 import com.recargapay.walletservice.entities.User;
 import com.recargapay.walletservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
