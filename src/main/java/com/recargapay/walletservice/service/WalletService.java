@@ -8,10 +8,12 @@ import com.recargapay.walletservice.entities.Wallet;
 import com.recargapay.walletservice.repository.BalanceRepository;
 import com.recargapay.walletservice.repository.UserRepository;
 import com.recargapay.walletservice.repository.WalletRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -40,7 +42,7 @@ public class WalletService {
         Wallet savedWallet = walletRepository.save(wallet);
 
         // Save the initial balance in the balance repository
-        saveInitialBalance(savedWallet);
+        saveBalanceHistory(savedWallet);
 
         // Convert saved Wallet entity to WalletDTO
         WalletDTO savedWalletDTO = new WalletDTO();
@@ -53,14 +55,48 @@ public class WalletService {
 
     }
 
-    private void saveInitialBalance(Wallet savedWallet) {
+    private void saveBalanceHistory(Wallet wallet) {
         BalanceHistory balanceHistory = BalanceHistory.builder()
-                .wallet(savedWallet)
-                .balance(savedWallet.getBalance())
+                .wallet(wallet)
+                .balance(wallet.getBalance())
                 .recordAt(LocalDateTime.now())
                 .build();
 
         balanceRepository.save(balanceHistory);
 
+    }
+
+    public Wallet currentBalance(Long userId) {
+        return walletRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Wallet not found with ID: " + userId));
+
+    }
+
+    public Wallet depositFunds(Long userId, @Valid BigDecimal amount) {
+        Wallet wallet = walletRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Wallet not found with ID: " + userId));
+
+        wallet.setBalance(wallet.getBalance().add(amount));
+
+        walletRepository.save(wallet);
+
+        // Save the updated balance in the balance repository
+        saveBalanceHistory(wallet);
+
+        return wallet;
+    }
+
+    public Wallet withdrawFunds(Long userId, BigDecimal amount) {
+        Wallet wallet = walletRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Wallet not found with ID: " + userId));
+
+        wallet.setBalance(wallet.getBalance().subtract(amount));
+
+        walletRepository.save(wallet);
+
+        // Save the updated balance in the balance repository
+        saveBalanceHistory(wallet);
+
+        return wallet;
     }
 }
